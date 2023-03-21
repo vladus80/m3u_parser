@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="m3u_parser:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/m3u_parser_jar</output-path>
+    <root id="archive" name="m3u_parser.jar">
+      <element id="module-output" name="m3u_parser" />
+    </root>
+  </artifact>
+</component>
