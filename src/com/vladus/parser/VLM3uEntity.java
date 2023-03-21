@@ -1,4 +1,4 @@
-package com.vladus.parcer;
+package com.vladus.parser;
 
 import java.util.HashMap;
 import java.util.Objects;

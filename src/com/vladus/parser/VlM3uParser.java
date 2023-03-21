@@ -1,4 +1,4 @@
-package com.vladus.parcer;
+package com.vladus.parser;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 
 
-public class VlM3uParcer {
+public class VlM3uParser {
 
-    public static List<VLM3uEntity> parce (String filePlaylist){
+    public static List<VLM3uEntity> parse (String filePlaylist){
 
 
         List<VLM3uEntity> vlm3uEntities = new ArrayList<>();
