@@ -1,5 +1,6 @@
 package com.vladus.parser;
 
+import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class VlM3uParser {
 
-    public static List<VLM3uEntity> parse (String filePlaylist){
+    public static @NotNull List<VLM3uEntity> parse (@NotNull String filePlaylist){
 
 
         List<VLM3uEntity> vlm3uEntities = new ArrayList<>();
@@ -33,7 +34,7 @@ public class VlM3uParser {
 
 
     // Возвращает блоки из файла m3u состоящие из строк начиная с #EXTINF и заканчива url канала
-    private static List<String> getBlocks(String filePlaylist) {
+    private static @NotNull List<String> getBlocks(@NotNull String filePlaylist) {
 
         ArrayList<String> blocks = new ArrayList<String>();
         try {
@@ -64,7 +65,7 @@ public class VlM3uParser {
 
 
     // Возвращает атрибуты из секции #EXTINF строки блока в виде HashMap
-    private static HashMap<String, String>  getAttrsSectionEXTINF(String block){
+    private static HashMap<String, String>  getAttrsSectionEXTINF(@NotNull String block){
         HashMap<String, String> keyValues = new HashMap<>(); // Создаем новый объект HashMap для хранения пар "ключ=значение"
 
         String sectionEXTINF = block.lines().findFirst().get(); // Выдергиваем первую строку из блока и
@@ -85,13 +86,12 @@ public class VlM3uParser {
             keyValues = null;
             System.out.println("Section not #EXTINF");
         }
-        //System.out.println();
         return keyValues;
     }
 
 
     // Возвращает значение группы к которой относится канал
-    private static String getGroupChannel(String block){
+    private static String getGroupChannel(@NotNull String block){
         //Берем строки и фильтруем на наличие тэга #EXTGRP
         List <String> listBlocks;
 
@@ -113,36 +113,32 @@ public class VlM3uParser {
 
     }
 
-    private static String getNameChannel(String block) {
-        String nameChannel = block.lines().findFirst().get().split(",")[1];
-        return nameChannel;
+    // Возвращает имя канала, тянем из секции #EXTINF (идет последний после длительности)
+    private static String getNameChannel(@NotNull String block) {
+        return block.lines().findFirst().get().split(",")[1];
     }
 
-    private static String getUriChannel(String block) {
+    // Возвращает uri канала
+    private static String getUriChannel(@NotNull String block) {
 
         Optional<String> lastString = block.lines()
-                .reduce((first, second) -> second);
+                                      .reduce((first, second) -> second);
 
         String uriChannel;
-        if (lastString.isPresent()) {
-            //System.out.println("Last string: " + lastString.get());
-            uriChannel = lastString.get();
-        } else {
-            uriChannel =  "No strings found";
-        }
+        uriChannel = lastString.orElse("No strings found");
         return uriChannel;
     }
 
-    private static String getLogoChannel(String block) {
+    //Возвращает логотип канала
+    private static String getLogoChannel(@NotNull String block) {
 
-        String logoChannel = getAttrsSectionEXTINF(block).get("tvg-logo");
-        return logoChannel;
+        return getAttrsSectionEXTINF(block).get("tvg-logo");
     }
 
-    private static String getEpgIdChannel(String block) {
+    // Возвращает  EPGID канала
+    private static String getEpgIdChannel(@NotNull String block) {
 
-        String epgIdChannel = getAttrsSectionEXTINF(block).get("tvg-id");
-        return epgIdChannel;
+        return getAttrsSectionEXTINF(block).get("tvg-id");
     }
 
 
