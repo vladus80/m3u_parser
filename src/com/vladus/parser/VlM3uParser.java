@@ -5,7 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import java.util.stream.Stream;
 
 
 public class VlM3uParser {
@@ -47,7 +47,7 @@ public class VlM3uParser {
                     block.append(line).append("\n");
                 } else if (line.startsWith("http")) {
                     block.append(line).append("\n");
-                    blocks.add(block.toString());
+                    blocks.add(String.valueOf(block));
                     block = new StringBuilder();
                 } else {
                     if (!line.startsWith("#EXTM3U")) {
@@ -68,7 +68,7 @@ public class VlM3uParser {
     private static HashMap<String, String>  getAttrsSectionEXTINF(@NotNull String block){
         HashMap<String, String> keyValues = new HashMap<>(); // Создаем новый объект HashMap для хранения пар "ключ=значение"
 
-        String sectionEXTINF = block.lines().findFirst().get(); // Выдергиваем первую строку из блока и
+        String sectionEXTINF = Arrays.stream(block.split("\\n")).findFirst().get(); // Выдергиваем первую строку из блока и
         if(sectionEXTINF.contains("#EXTINF")){                  // проверяем на наличие в ней тэга #EXTINF"
             String inputAttrEXTINF = sectionEXTINF.split(",", 2)[0]; // Отделяем атрибуты
             String inputNameChannelEXTINF = sectionEXTINF.split(",", 2)[1]; // Отделяем имя канала, как правило после запятой в секции #EXTINF
@@ -86,6 +86,7 @@ public class VlM3uParser {
             keyValues = null;
             System.out.println("Section not #EXTINF");
         }
+
         return keyValues;
     }
 
@@ -96,7 +97,7 @@ public class VlM3uParser {
         List <String> listBlocks;
 
         // Для начала ищем в секции #EXTGRP,
-        listBlocks = block.lines().filter(s -> s.startsWith("#EXTGRP")).collect(Collectors.toList());
+        listBlocks = Arrays.stream(block.split("\\n")).filter(s -> s.startsWith("#EXTGRP")).collect(Collectors.toList());
         HashMap<String,String> stringHashMap;
 
 
@@ -115,13 +116,13 @@ public class VlM3uParser {
 
     // Возвращает имя канала, тянем из секции #EXTINF (идет последний после длительности)
     private static String getNameChannel(@NotNull String block) {
-        return block.lines().findFirst().get().split(",")[1];
+        return Arrays.stream(block.split("\\n")).findFirst().get().split(",")[1];
     }
 
     // Возвращает uri канала
     private static String getUriChannel(@NotNull String block) {
 
-        Optional<String> lastString = block.lines()
+        Optional<String> lastString = Arrays.stream(block.split("\\n"))
                                       .reduce((first, second) -> second);
 
         String uriChannel;
